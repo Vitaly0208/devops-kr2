@@ -1,3 +1,4 @@
+# KR2: Sheloumov
 import os
 import socket
 
