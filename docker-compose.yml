@@ -34,7 +34,7 @@ services:
 
 networks:
   backend:
-    internal: true
+    driver: bridge
 
 volumes:
   redis_data:
