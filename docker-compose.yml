@@ -1,0 +1,40 @@
+services:
+  app:
+    image: kr2-app:1.0
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      REDIS_HOST: redis
+      STUDENT: Sheloumov
+    ports:
+      - "127.0.0.1:8002:8002"
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - backend
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    env_file:
+      - .env
+    command: >
+      sh -c 'exec redis-server --appendonly yes --requirepass "$$REDIS_PASSWORD"'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" ping | grep -q PONG"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - backend
+
+networks:
+  backend:
+    internal: true
+
+volumes:
+  redis_data:
